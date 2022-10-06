@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
-import cross from "../images/cross.png";
+// import cross from "../images/cross.png";
+import caution from "../images/caution.png";
 import tick from "../images/tick.png";
+import warning from "../images/warning.png";
 
 const Result = ({ url }) => {
   let [data, setData] = useState(null);
@@ -12,7 +14,9 @@ const Result = ({ url }) => {
     axios
       .get(`http://localhost:8080?url=${url}`)
       .then(({ data: dt }) => {
-        console.log(dt);
+        console.log(dt.data.codeQLData);
+        if (dt.data.codeQLData)
+          dt.data.codeQLData = dt.data.codeQLData.reverse(); 
         setData(dt.data);
         setOwner(dt.owner);
       })
@@ -32,8 +36,16 @@ const Result = ({ url }) => {
         <div className="final-report">
           <div className="result-status">
             <div>
-              <span>Scan completed</span>
-              {data.phishingCheck ? (<img src={cross} alt="status"></img>) : (<img src={tick} alt="status"></img>)}
+              <span>
+                {data.phishingCheck
+                  ? "Warning! Phishing Detected"
+                  : "Repo safe to use"}
+              </span>
+              {data.phishingCheck ? (
+                <img src={caution} alt="status"></img>
+              ) : (
+                <img src={tick} alt="status"></img>
+              )}
             </div>
             <div className="result-table">
               <div>
@@ -43,7 +55,10 @@ const Result = ({ url }) => {
                 </a>
               </div>
               <div>
-                <span>Status: </span> {data.phishingCheck ? 'Phishing detected!' : 'This Repo is Safe to use👍'}
+                <span>Status: </span>{" "}
+                {data.phishingCheck
+                  ? "Phishing detected!"
+                  : "This Repo is Safe to use👍"}
               </div>
               <div>
                 <span>Package Name: </span>
@@ -53,43 +68,41 @@ const Result = ({ url }) => {
                 <span>Repo Stars: </span> {data.stars}
               </div>
               <div>
-                {
-                    data.phishingCheck ? (
-                      <div>
-                      <span> for more info on phishing detection: </span>
-                        
-                      {!data.workflow_run_status && (
-                        <>
-                          <a
-                            href={data.phishingCheckAction}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {" "}
-                            click here{" "}
-                          </a>
-                        </>
-                      )}
-                    </div>
-                    ) : (
-                    <div>
-                      <span> latest workflow test status: </span>
-                        
-                      {!data.workflow_run_status && (
-                        <>
-                          <a
-                            href={`https://github.com/MananJethwani/phishing-check/actions`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {" "}
-                            click here{" "}
-                          </a>
-                        </>
-                      )}
-                    </div>
-                    )
-                }
+                {data.phishingCheck ? (
+                  <div>
+                    <span> for more info on phishing detection: </span>
+
+                    {!data.workflow_run_status && (
+                      <>
+                        <a
+                          href={data.phishingCheckAction}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {" "}
+                          click here{" "}
+                        </a>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <span> latest workflow test status: </span>
+
+                    {!data.workflow_run_status && (
+                      <>
+                        <a
+                          href={`https://github.com/fpg-JSClub/phishing-check/actions`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {" "}
+                          click here{" "}
+                        </a>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -119,12 +132,12 @@ const Result = ({ url }) => {
             </div>
           </div>
         </div>
-      ) :  (
+      ) : (
         <div className="final-report final-report-2">
           <div className="final-report-scan">
             <div>
-              <span>Scan completed</span>
-              <img src={cross} alt="status"></img>
+              <span>Vulnerabilities detected!</span>
+              <img src={warning} alt="status"></img>
             </div>
             <div className="result-status-fail">
               <div>
@@ -144,19 +157,22 @@ const Result = ({ url }) => {
                 <span>Latest workflow test status: </span>{" "}
                 {data.workflow_run_status ? "true" : "false"}{" "}
               </div>
-              {!data.workflow_run_status && (
-                <>
-                  <a href={`https://github.com/${data.package}/actions`}>
-                    click here
-                  </a>
-                </>
-              )}{" "}
-              <span>Reason: </span>
-              {data.reason}
+              <div>
+                <span>Reason: </span>
+                {data.reason}&nbsp;
+                {!data.workflow_run_status && (
+                  <>
+                    <a href={`https://github.com/${data.package}/actions`}>
+                      click here
+                    </a>
+                  </>
+                )}{" "}
+              </div>
             </div>
+            <div className="scan-status"></div>
             <div className="total-vul">
               <span>
-                total vulnerabilities found - {data.codeQLData.length}
+                Total vulnerabilities found - {data.codeQLData.length}
               </span>
               {data.codeQLData && data.codeQLData.length && (
                 <>

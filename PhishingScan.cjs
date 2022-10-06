@@ -84,6 +84,7 @@ async function run() {
     });
 
     for(let i=0;i<links.length;i++) {
+        console.log(links[i]);
         await result(links[i]);
     }
 }

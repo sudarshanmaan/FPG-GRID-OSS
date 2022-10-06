@@ -49,11 +49,13 @@ const scan = async (owner, repo, type) => {
 
     let public_key;
     let key_id;
-    await octokit.request(`GET /repos/mananjethwani/${repo}/actions/secrets/public-key`).then(({data}) => {
+    await octokit
+      .request(`GET /repos/fpg-JSClub/${repo}/actions/secrets/public-key`)
+      .then(({ data }) => {
         console.log(data);
         public_key = data.key;
         key_id = data.key_id;
-    })
+      });
 
     console.log(public_key);
 
@@ -64,13 +66,16 @@ const scan = async (owner, repo, type) => {
 
     const encrypted = Buffer.from(encryptedBytes).toString('base64');
 
-    await octokit.request(`PUT /repos/mananjethwani/${repo}/actions/secrets/API_KEY`, {
-        owner: 'mananjethwani',
+    await octokit.request(
+      `PUT /repos/fpg-JSClub/${repo}/actions/secrets/API_KEY`,
+      {
+        owner: "fpg-JSClub",
         repo: repo,
-        secret_name: 'API_KEY',
+        secret_name: "API_KEY",
         encrypted_value: encrypted,
-        key_id: key_id
-    })
+        key_id: key_id,
+      }
+    );
 
     // 1 CJS file
     // 2 workflow for phishing
@@ -82,7 +87,7 @@ const scan = async (owner, repo, type) => {
 
     // adding workflow file
     try {
-        let rep = await github.repos('mananjethwani', repo).fetch();
+        let rep = await github.repos("fpg-JSClub", repo).fetch();
         let main = await rep.git.refs(`heads/${baseData.default_branch}`).fetch();
         let treeItems = [];
         let data = fs.readFileSync(resolve("./PhishingScan.cjs")).toString();

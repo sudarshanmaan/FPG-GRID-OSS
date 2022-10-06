@@ -9,7 +9,7 @@ const Scanning = ({setStatus, url}) => {
       .then(({ data }) => {
         console.log(data);
         if (data === "scan in progress") {
-          setTimeout(checkStatus, 50000);
+          setTimeout(checkStatus, 25000);
         } else {
           setStatus("show results");
         }
